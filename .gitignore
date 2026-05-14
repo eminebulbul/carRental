@@ -2,164 +2,39 @@
 bin/
 obj/
 [Dd]ebug/
-[Dd]ebugPublic/
 [Rr]elease/
-[Rr]eleases/
 x64/
 x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
-
-# Visual Studio cache/options
 .vs/
 .vscode/
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
 
-# Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.code-workspace
-
-# Rider
-.idea/
-*.sln.iml
-*.swp
-*.swo
-*~
-
-# User-specific files
-*.rsuser
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-
-# ReSharper is a .NET coding add-in
-_ReSharper*/
-*.[Rr]e[Ss]harper
-*.DotSettings.user
-
-# NUnit
-nunit-*.xml
-
-# Test Results
-TestResults/
-*.trx
-
-# Visual Studio profiler
-*.psess
-*.vsp
-*.vspx
-*.sap
-
-# Coverage
-coverage/
-coverageReport/
-
-# Local env files
-.env
-.env.local
-.env.*.local
-
-# appsettings files with sensitive data
-appsettings.Development.json
-appsettings.Production.json
-
-# OS specific
-.DS_Store
-Thumbs.db
-.gitkeep
-
-# Node/npm
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# Temporary files
-*.tmp
-*.temp
-*.log
-*.class
-
-# NuGet
-*.nupkg
-*.snupkg
-.nuget/
-
-# Miscellaneous
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-*.ldf
-*.ldf
-
-# Package files
-*.runtimeconfig.json
-*.runtimeconfig.dev.json
-
-# Database files (if local)
-*.db
-*.sqlite
-*.sqlite3
-*.mdf
-*.ldf
-
-# Backup files
-*.bak
-*.backup
-
-# Compiled python files
-*.pyc
-__pycache__/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# Docker
-docker-compose.override.yml
-.dockerignore
-
-# SSL/TLS certificates
-*.pem
-*.key
-*.crt
-*.cer
-
-# Credentials
-credentials.json
-secrets.json
-appsettings.secrets.json
-
-# Build output
-publish/
-PublishProfiles/
-
-# Rider
-.idea/
-
-# Archives
-*.zip
-*.rar
-*.7z
-# appsettings files with sensitive data
+# Sensitive files
 appsettings.json
 appsettings.Development.json
 appsettings.Production.json
+*.db
+*.sqlite
+.env
+
+# IDE
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+_ReSharper*/
+*.DotSettings.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# NuGet
+*.nupkg
+.nuget/
+
+# Logs
+logs/
+*.log
+
+# Rider
+.idea/

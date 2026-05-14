@@ -1,0 +1,50 @@
+@page "{id}"
+@model CarRental.Pages.Customers.DeleteModel
+@{
+    ViewData["Title"] = "Müşteri Sil";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <h1>@ViewData["Title"]</h1>
+            <hr />
+
+            <div class="alert alert-warning" role="alert">
+                <strong>Dikkat!</strong> Bu müşteri kaydını silmek üzeresiniz. Bu işlem geri alınamaz.
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Ad:</strong></label>
+                <p class="form-control-plaintext">@Model.Customer.FirstName</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Soyad:</strong></label>
+                <p class="form-control-plaintext">@Model.Customer.LastName</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Ehliyet Numarası:</strong></label>
+                <p class="form-control-plaintext">@Model.Customer.LicenseNumber</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>E-posta:</strong></label>
+                <p class="form-control-plaintext">@(Model.Customer.Email ?? "-")</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Telefon:</strong></label>
+                <p class="form-control-plaintext">@(Model.Customer.Phone ?? "-")</p>
+            </div>
+
+            <form method="post">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <button type="submit" class="btn btn-danger">Sil</button>
+                    <a asp-page="./Index" class="btn btn-secondary">İptal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

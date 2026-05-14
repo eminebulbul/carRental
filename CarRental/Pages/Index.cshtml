@@ -1,0 +1,122 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Ana Sayfa - Araç Kiralama Sistemi";
+}
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="mb-4">🚗 Araç Kiralama Sistemi</h1>
+        <p class="lead text-muted">BLM2058 Veritabanı Yönetimi - Ankara Üniversitesi Bilgisayar Mühendisliği</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-5">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Toplam Müşteriler</h5>
+                <h2>@Model.TotalCustomers</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Müsait Araçlar</h5>
+                <h2>@Model.AvailableVehicles</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title">Aktif Kiralamalar</h5>
+                <h2>@Model.ActiveRentals</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Toplam Gelir</h5>
+                <h2>₺@Model.TotalRevenue.ToString("N0")</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4">Hızlı İşlemler</h2>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">📋 Müşteri Yönetimi</h5>
+                <p class="card-text">Müşterileri yönetin, yeni müşteri ekleyin veya mevcut bilgileri güncelleyin.</p>
+                <a href="/Customers" class="btn btn-primary btn-sm">Müşteri Listesi</a>
+                <a href="/Customers/Create" class="btn btn-outline-primary btn-sm">Yeni Müşteri</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">🚗 Araç Yönetimi</h5>
+                <p class="card-text">Araç katalogunu görüntüleyin, müsaitlik durumunu kontrol edin.</p>
+                <a href="/Vehicles" class="btn btn-primary btn-sm">Araç Listesi</a>
+                <a href="/Vehicles?status=available" class="btn btn-outline-primary btn-sm">Müsait Araçlar</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">📅 Kiralama Yönetimi</h5>
+                <p class="card-text">Kiralamalar oluşturun, durumlarını güncelleyin ve takip edin.</p>
+                <a href="/Rentals" class="btn btn-primary btn-sm">Kiralama Listesi</a>
+                <a href="/Rentals/Create" class="btn btn-outline-primary btn-sm">Yeni Kiralama</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">💳 Ödeme & Hasar</h5>
+                <p class="card-text">Ödemeleri ve hasar raporlarını yönetin.</p>
+                <a href="/Payments" class="btn btn-primary btn-sm">Ödemeler</a>
+                <a href="/DamageReports" class="btn btn-outline-primary btn-sm">Hasar Raporları</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Information -->
+<div class="row mt-5">
+    <div class="col-md-12">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">📊 Sistem Bilgileri</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><strong>Toplam Araçlar:</strong> @Model.TotalVehicles</p>
+                        <p><strong>Kiralanan Araçlar:</strong> @Model.RentedVehicles</p>
+                        <p><strong>Bakımdaki Araçlar:</strong> @Model.MaintenanceVehicles</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Tamamlanan Kiralamalar:</strong> @Model.CompletedRentals</p>
+                        <p><strong>Beklemede Kiralamalar:</strong> @Model.PendingRentals</p>
+                        <p><strong>İptal Edilen:</strong> @Model.CancelledRentals</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Toplam Hasar Raporları:</strong> @Model.TotalDamageReports</p>
+                        <p><strong>Toplam Tamir Maliyeti:</strong> ₺@Model.TotalRepairCosts.ToString("N0")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

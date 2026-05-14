@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Araç Kiralama Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        nav {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand,
+        .navbar-nav .nav-link {
+            color: #ffffff !important;
+            font-weight: 500;
+        }
+        
+        .navbar-brand:hover,
+        .navbar-nav .nav-link:hover {
+            opacity: 0.9;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #66398a 100%);
+        }
+        
+        .badge-status {
+            font-size: 0.85rem;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        .status-available {
+            background-color: #28a745;
+        }
+        
+        .status-rented {
+            background-color: #ffc107;
+            color: #000;
+        }
+        
+        .status-maintenance {
+            background-color: #dc3545;
+        }
+        
+        .status-pending {
+            background-color: #17a2b8;
+        }
+        
+        .status-active {
+            background-color: #28a745;
+        }
+        
+        .status-completed {
+            background-color: #6c757d;
+        }
+        
+        .status-cancelled {
+            background-color: #dc3545;
+        }
+        
+        table thead {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        footer {
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            margin-top: 3rem;
+            padding: 2rem 0;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        .main-container {
+            min-height: calc(100vh - 200px);
+            padding: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-lg">
+            <a class="navbar-brand" asp-page="/Index">🚗 Araç Kiralama</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Index">Ana Sayfa</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="customersDropdown" role="button" data-bs-toggle="dropdown">
+                            Müşteriler
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="customersDropdown">
+                            <li><a class="dropdown-item" asp-page="/Customers/Index">Müşteri Listesi</a></li>
+                            <li><a class="dropdown-item" asp-page="/Customers/Create">Yeni Müşteri</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="vehiclesDropdown" role="button" data-bs-toggle="dropdown">
+                            Araçlar
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="vehiclesDropdown">
+                            <li><a class="dropdown-item" asp-page="/Vehicles/Index">Araç Listesi</a></li>
+                            <li><a class="dropdown-item" asp-page="/Vehicles/Index" asp-route-status="available">Müsait Araçlar</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="rentalsDropdown" role="button" data-bs-toggle="dropdown">
+                            Kiralamalar
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="rentalsDropdown">
+                            <li><a class="dropdown-item" asp-page="/Rentals/Index">Kiralama Listesi</a></li>
+                            <li><a class="dropdown-item" asp-page="/Rentals/Create">Yeni Kiralama</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-page="/Rentals/Index" asp-route-status="pending">Beklemede Olanlar</a></li>
+                            <li><a class="dropdown-item" asp-page="/Rentals/Index" asp-route-status="active">Aktif Kiralamalar</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="moreDropdown" role="button" data-bs-toggle="dropdown">
+                            Daha Fazla
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="moreDropdown">
+                            <li><a class="dropdown-item" asp-page="/Payments/Index">Ödemeler</a></li>
+                            <li><a class="dropdown-item" asp-page="/DamageReports/Index">Hasar Raporları</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="container-lg">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container-lg">
+            <p>&copy; 2026 Araç Kiralama Sistemi - BLM2058 Veritabanı Yönetimi | Emine Bülbül (21290189)</p>
+            <small>Ankara Üniversitesi - Mühendislik Fakültesi - Bilgisayar Mühendisliği</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

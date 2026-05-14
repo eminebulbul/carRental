@@ -1,0 +1,78 @@
+@page "{id}"
+@model CarRental.Pages.Rentals.DeleteModel
+@{
+    ViewData["Title"] = "Kiralama Sil";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>@ViewData["Title"]</h1>
+            <hr />
+
+            <div class="alert alert-warning" role="alert">
+                <strong>Dikkat!</strong> Bu kiralama kaydını silmek üzeresiniz. Bu işlem geri alınamaz.
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Müşteri:</strong></label>
+                        <p class="form-control-plaintext">@Model.Rental.Customer?.FirstName @Model.Rental.Customer?.LastName</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Araç:</strong></label>
+                        <p class="form-control-plaintext">@Model.Rental.Vehicle?.Brand @Model.Rental.Vehicle?.Model</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Başlangıç Tarihi:</strong></label>
+                        <p class="form-control-plaintext">@Model.Rental.StartDate:G</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Alış Şubesi:</strong></label>
+                        <p class="form-control-plaintext">@Model.Rental.PickupBranch?.City</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>İade Şubesi:</strong></label>
+                        <p class="form-control-plaintext">@(Model.Rental.DropoffBranch?.City ?? "-")</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Durum:</strong></label>
+                        <p class="form-control-plaintext">
+                            @if (Model.Rental.Status == "pending")
+                            {
+                                <span class="badge bg-info">Bekleme</span>
+                            }
+                            else if (Model.Rental.Status == "active")
+                            {
+                                <span class="badge bg-success">Aktif</span>
+                            }
+                            else if (Model.Rental.Status == "completed")
+                            {
+                                <span class="badge bg-secondary">Tamamlandı</span>
+                            }
+                            else if (Model.Rental.Status == "cancelled")
+                            {
+                                <span class="badge bg-danger">İptal</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <form method="post">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <button type="submit" class="btn btn-danger">Sil</button>
+                    <a asp-page="./Index" class="btn btn-secondary">İptal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,97 @@
+@page
+@model CarRental.Pages.Rentals.CreateModel
+@{
+    ViewData["Title"] = "Yeni Kiralama Ekle";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>@ViewData["Title"]</h1>
+            <hr />
+
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Rental.CustomerId" class="form-label"></label>
+                            <select asp-for="Rental.CustomerId" asp-items="@Model.Customers" class="form-select">
+                                <option value="">-- Müşteri Seçin --</option>
+                            </select>
+                            <span asp-validation-for="Rental.CustomerId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Rental.VehicleId" class="form-label"></label>
+                            <select asp-for="Rental.VehicleId" asp-items="@Model.Vehicles" class="form-select">
+                                <option value="">-- Araç Seçin --</option>
+                            </select>
+                            <span asp-validation-for="Rental.VehicleId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Rental.PickupBranchId" class="form-label"></label>
+                            <select asp-for="Rental.PickupBranchId" asp-items="@Model.Branches" class="form-select">
+                                <option value="">-- Alış Şubesi Seçin --</option>
+                            </select>
+                            <span asp-validation-for="Rental.PickupBranchId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Rental.DropoffBranchId" class="form-label"></label>
+                            <select asp-for="Rental.DropoffBranchId" asp-items="@Model.Branches" class="form-select">
+                                <option value="">-- İade Şubesi Seçin --</option>
+                            </select>
+                            <span asp-validation-for="Rental.DropoffBranchId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Rental.StartDate" class="form-label"></label>
+                            <input asp-for="Rental.StartDate" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="Rental.StartDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Rental.EndDate" class="form-label"></label>
+                            <input asp-for="Rental.EndDate" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="Rental.EndDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Rental.Status" class="form-label"></label>
+                    <select asp-for="Rental.Status" class="form-select">
+                        <option value="pending">Bekleme</option>
+                        <option value="active">Aktif</option>
+                        <option value="completed">Tamamlandı</option>
+                        <option value="cancelled">İptal</option>
+                    </select>
+                    <span asp-validation-for="Rental.Status" class="text-danger"></span>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>Not:</strong> Toplam tutar, bitiş tarihi girildiğinde otomatik olarak hesaplanacaktır.
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <button type="submit" class="btn btn-success">Ekle</button>
+                    <a asp-page="./Index" class="btn btn-secondary">İptal</a>
+                </div>
+            </form>
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.Count > 0)
+            {
+                <div class="alert alert-danger mt-3">
+                    <strong>Hata!</strong> Lütfen tüm gerekli alanları kontrol edin.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

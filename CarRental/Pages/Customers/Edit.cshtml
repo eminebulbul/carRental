@@ -1,0 +1,64 @@
+@page "{id}"
+@model CarRental.Pages.Customers.EditModel
+@{
+    ViewData["Title"] = "Müşteri Düzenle";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <h1>@ViewData["Title"]</h1>
+            <hr />
+
+            <form method="post">
+                <input asp-for="Customer.CustomerId" type="hidden" />
+                <input asp-for="Customer.CreatedAt" type="hidden" />
+
+                <div class="mb-3">
+                    <label asp-for="Customer.FirstName" class="form-label"></label>
+                    <input asp-for="Customer.FirstName" class="form-control" />
+                    <span asp-validation-for="Customer.FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Customer.LastName" class="form-label"></label>
+                    <input asp-for="Customer.LastName" class="form-control" />
+                    <span asp-validation-for="Customer.LastName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Customer.LicenseNumber" class="form-label"></label>
+                    <input asp-for="Customer.LicenseNumber" class="form-control" />
+                    <span asp-validation-for="Customer.LicenseNumber" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Customer.BirthDate" class="form-label"></label>
+                    <input asp-for="Customer.BirthDate" class="form-control" type="date" />
+                    <span asp-validation-for="Customer.BirthDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Customer.Email" class="form-label"></label>
+                    <input asp-for="Customer.Email" class="form-control" type="email" />
+                    <span asp-validation-for="Customer.Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Customer.Phone" class="form-label"></label>
+                    <input asp-for="Customer.Phone" class="form-control" type="tel" />
+                    <span asp-validation-for="Customer.Phone" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <button type="submit" class="btn btn-warning">Güncelle</button>
+                    <a asp-page="./Index" class="btn btn-secondary">İptal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
