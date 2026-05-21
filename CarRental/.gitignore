@@ -159,10 +159,10 @@ PublishProfiles/
 *.zip
 *.rar
 *.7z
+
+# Ignore Markdown documentation files
+*.md
 # appsettings files with sensitive data
 appsettings.json
 appsettings.Development.json
 appsettings.Production.json
-
-
-REPORT.md

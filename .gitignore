@@ -36,5 +36,8 @@ Thumbs.db
 logs/
 *.log
 
+# Ignore Markdown documentation files
+*.md
+
 # Rider
 .idea/
