@@ -163,3 +163,6 @@ PublishProfiles/
 appsettings.json
 appsettings.Development.json
 appsettings.Production.json
+
+
+REPORT.md
