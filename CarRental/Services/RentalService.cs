@@ -226,5 +226,19 @@ namespace CarRental.Services
 
             return vehicle.DailyPrice * days;
         }
+
+        public async Task<IEnumerable<Rental>> GetAllDetailedAsync()
+        {
+            return await _dbSet
+                .Include(r => r.Customer)
+                .Include(r => r.Vehicle)
+                    .ThenInclude(v => v.Category)
+                .Include(r => r.PickupBranch)
+                .Include(r => r.DropoffBranch)
+                .Include(r => r.Payment)
+                .Include(r => r.DamageReports)
+                .OrderByDescending(r => r.StartDate)
+                .ToListAsync();
+        }
     }
 }

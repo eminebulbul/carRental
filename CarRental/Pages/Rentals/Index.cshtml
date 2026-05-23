@@ -36,18 +36,18 @@
                     {
                         var statusClass = rental.Status switch
                         {
-                            "pending" => "badge-info",
-                            "active" => "badge-success",
-                            "completed" => "badge-secondary",
-                            "cancelled" => "badge-danger",
-                            _ => "badge-secondary"
+                            "pending" => "bg-info text-dark",
+                            "active" => "bg-success text-white",
+                            "completed" => "bg-secondary text-white",
+                            "cancelled" => "bg-danger text-white",
+                            _ => "bg-secondary text-white"
                         };
 
                         var statusText = rental.Status switch
                         {
                             "pending" => "Beklemede",
                             "active" => "Aktif",
-                            "completed" => "Tamamlandi",
+                            "completed" => "Tamamlandı",
                             "cancelled" => "İptal",
                             _ => rental.Status
                         };

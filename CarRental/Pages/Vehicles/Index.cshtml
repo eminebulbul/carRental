@@ -10,6 +10,7 @@
             <h1 class="display-5">🚗 Araç Listesi</h1>
         </div>
         <div class="col-md-4 text-end">
+            <a class="btn btn-primary me-2" asp-page="/Vehicles/Create">Yeni Ekle</a>
             <span class="badge bg-success fs-6">Toplam: @Model.Vehicles.Count() araç</span>
         </div>
     </div>
@@ -56,6 +57,13 @@
                                 <small class="text-muted d-block">
                                     💰 Günlük: <strong>₺@vehicle.DailyPrice</strong>
                                 </small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-0">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a asp-page="/Vehicles/ManageFeatures" asp-route-id="@vehicle.VehicleId" class="btn btn-sm btn-outline-info">Özellikler</a>
+                                <a asp-page="/Vehicles/Edit" asp-route-id="@vehicle.VehicleId" class="btn btn-sm btn-outline-warning">Düzenle</a>
+                                <a asp-page="/Vehicles/Delete" asp-route-id="@vehicle.VehicleId" class="btn btn-sm btn-outline-danger">Sil</a>
                             </div>
                         </div>
                     </div>

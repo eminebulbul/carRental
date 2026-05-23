@@ -4,10 +4,46 @@
     ViewData["Title"] = "Raporlar ve SQL Sorguları";
 }
 
+<style>
+    .custom-sql-input {
+        background-color: #f5f6f8;
+    }
+
+    .custom-sql-input::placeholder {
+        color: #98a1ab;
+        opacity: 1;
+    }
+</style>
+
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
         <h2 class="mb-1">Raporlar / SQL Sorguları</h2>
-        <p class="text-muted mb-0">Hazır sorguları tek tıkla çalıştırıp sonuçları tabloda görüntüleyin.</p>
+        <p class="text-muted mb-0">Hazır sorguları tek tıkla çalıştırıp sonuçları tabloda görüntüleyin veya özel SQL ile veri değiştirin.</p>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        
+        <p class="text-muted mb-3">SELECT/WITH sorguları sonuç tablosu döndürür. INSERT/UPDATE/DELETE sorguları ise etkilenen satır sayısını gösterir. Tek ifade çalıştırılır.</p>
+
+        <form method="post" asp-page-handler="RunCustom">
+            <div class="mb-3">
+                <textarea asp-for="CustomSql" class="form-control custom-sql-input" rows="8" placeholder="SELECT * FROM vehicle WHERE status = 'available' ORDER BY daily_price;\n\nINSERT INTO customer (...) VALUES (...);\nUPDATE vehicle SET status = 'maintenance' WHERE vehicle_id = 1;\nDELETE FROM rental WHERE rental_id = 1;"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success">Sorguyu Çalıştır</button>
+        </form>
+
+        @if (!string.IsNullOrWhiteSpace(Model.CustomQueryError))
+        {
+            <div class="alert alert-danger mt-3 mb-0">@Model.CustomQueryError</div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.CustomQueryResultMessage))
+        {
+            <div class="alert alert-success mt-3 mb-0">@Model.CustomQueryResultMessage</div>
+        }
     </div>
 </div>
 
@@ -28,26 +64,6 @@
                 </form>
             }
         </div>
-    </div>
-</div>
-
-<div class="card mb-4">
-    <div class="card-body">
-        <h5 class="card-title mb-3">Kendi SQL Sorgun</h5>
-        <p class="text-muted mb-3">Sadece okuma sorgulari (SELECT veya WITH) calistirilir. Sonuc en fazla 500 satirla sinirlandirilir.</p>
-
-        <form method="post" asp-page-handler="RunCustom">
-            <div class="mb-3">
-                <textarea asp-for="CustomSql" class="form-control" rows="8" placeholder="Ornek: SELECT * FROM vehicle WHERE status = 'available' ORDER BY daily_price;"></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-success">Sorguyu Çalıştır</button>
-        </form>
-
-        @if (!string.IsNullOrWhiteSpace(Model.CustomQueryError))
-        {
-            <div class="alert alert-danger mt-3 mb-0">@Model.CustomQueryError</div>
-        }
     </div>
 </div>
 

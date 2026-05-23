@@ -27,6 +27,11 @@ namespace CarRental.Services
         /// </summary>
         Task<IEnumerable<Rental>> GetCustomerRentalsAsync(int customerId);
 
+            /// <summary>
+            /// Get all rentals including related data (customer, vehicle, branches, payment, damage reports)
+            /// </summary>
+            Task<IEnumerable<Rental>> GetAllDetailedAsync();
+
         /// <summary>
         /// Check if a vehicle has overlapping active rentals
         /// (Prevents renting same vehicle at same time - KR-01)

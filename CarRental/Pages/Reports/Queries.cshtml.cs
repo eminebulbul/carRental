@@ -11,15 +11,17 @@ public class QueriesModel : PageModel
 {
     private static readonly string[] _forbiddenKeywords =
     [
-        "insert", "update", "delete", "drop", "alter", "truncate", "create",
-        "grant", "revoke", "call", "do", "copy", "into"
+        "drop", "alter", "truncate", "create",
+        "grant", "revoke", "call", "do", "copy"
     ];
+
+    private static readonly string[] _writeKeywords = ["insert", "update", "delete"];
 
     private static readonly List<QueryDefinition> _queryDefinitions =
     [
         new(
             "available-vehicles",
-            "9.1 Müsait Araçları Listeleme",
+            "Müsait Araçları Listeleme",
             "Durumu available olan araçları kategori ve şube bilgisiyle listeler.",
             @"SELECT v.vehicle_id, v.plate_number, v.brand, v.model, v.year,
        v.daily_price, vc.name AS category, b.city AS branch
@@ -30,7 +32,7 @@ WHERE v.status = 'available'
 ORDER BY v.daily_price;"),
         new(
             "active-rentals",
-            "9.2 Aktif Kiralamalar ile Müşteri Bilgileri",
+            "Aktif Kiralamalar ile Müşteri Bilgileri",
             "Aktif kiralamaları müşteri ve araç detaylarıyla birlikte getirir.",
             @"SELECT r.rental_id, c.first_name || ' ' || c.last_name AS musteri,
        v.plate_number, v.brand || ' ' || v.model AS arac,
@@ -44,7 +46,7 @@ WHERE r.status = 'active'
 ORDER BY r.start_date;"),
         new(
             "branch-revenue",
-            "9.3 Şubeye Göre Gelir Raporu",
+            "Şubeye Göre Gelir Raporu",
             "Her şube için kiralama sayısı ve toplam gelir bilgisini gösterir.",
             @"SELECT b.city AS sube,
        COUNT(r.rental_id) AS kiralama_sayisi,
@@ -56,7 +58,7 @@ GROUP BY b.branch_id, b.city
 ORDER BY toplam_gelir DESC;"),
         new(
             "most-rented-vehicles",
-            "9.4 En Çok Kiralanan Araçlar",
+            "En Çok Kiralanan Araçlar",
             "Tamamlanmış kiralamalara göre en çok kiralanan araçları sıralar.",
             @"SELECT v.plate_number, v.brand || ' ' || v.model AS arac,
        COUNT(r.rental_id) AS kiralama_sayisi,
@@ -70,7 +72,7 @@ ORDER BY kiralama_sayisi DESC
 LIMIT 10;"),
         new(
             "vehicle-features",
-            "9.5 Araç Özelliklerini Listeleme (M:N Sorgu)",
+            " Araç Özelliklerini Listeleme (M:N Sorgu)",
             "Araçların tüm özelliklerini birleştirilmiş şekilde listeler.",
             @"SELECT v.plate_number, v.brand || ' ' || v.model AS arac,
        STRING_AGG(f.name, ', ') AS ozellikler
@@ -81,7 +83,7 @@ GROUP BY v.vehicle_id, v.plate_number, v.brand, v.model
 ORDER BY v.plate_number;"),
         new(
             "damage-summary",
-            "9.6 Hasar Raporu Özeti",
+            "Hasar Raporu Özeti",
             "Hasar kayıtlarını kiralama, müşteri ve araç bilgileriyle birlikte gösterir.",
             @"SELECT r.rental_id,
        c.first_name || ' ' || c.last_name AS musteri,
@@ -113,6 +115,7 @@ ORDER BY dr.report_date DESC;")
     public string SelectedQueryDescription { get; private set; } = string.Empty;
     public string SelectedSql { get; private set; } = string.Empty;
     public string? CustomQueryError { get; private set; }
+    public string? CustomQueryResultMessage { get; private set; }
 
     public List<string> ResultColumns { get; private set; } = [];
     public List<List<string>> ResultRows { get; private set; } = [];
@@ -138,8 +141,10 @@ ORDER BY dr.report_date DESC;")
         SelectedQueryTitle = "Özel SQL Sorgusu";
         SelectedQueryDescription = "Kullanıcının yazdığı sorgu sonucu.";
         SelectedSql = CustomSql;
+        CustomQueryError = null;
+        CustomQueryResultMessage = null;
 
-        if (!TryValidateReadOnlyQuery(CustomSql, out var normalizedSql, out var errorMessage))
+        if (!TryValidateCustomQuery(CustomSql, out var normalizedSql, out var queryKind, out var errorMessage))
         {
             CustomQueryError = errorMessage;
             ResultColumns = [];
@@ -147,13 +152,26 @@ ORDER BY dr.report_date DESC;")
             return Page();
         }
 
-        CustomQueryError = null;
         CustomSql = normalizedSql;
 
-        // Keep the page responsive by capping custom query output.
-        var limitedSql = $"SELECT * FROM ({normalizedSql}) AS q LIMIT 500";
-        await ExecuteQueryAsync(limitedSql);
-        SelectedSql = normalizedSql;
+        if (queryKind == CustomQueryKind.Read)
+        {
+            // Keep the page responsive by capping custom query output.
+            var limitedSql = $"SELECT * FROM ({normalizedSql}) AS q LIMIT 500";
+            await ExecuteQueryAsync(limitedSql);
+            SelectedSql = normalizedSql;
+            CustomQueryResultMessage = "Okuma sorgusu başarıyla çalıştırıldı. Sonuçlar aşağıda listeleniyor.";
+        }
+        else
+        {
+            var affectedRows = await ExecuteNonQueryAsync(normalizedSql);
+            ResultColumns = [];
+            ResultRows = [];
+            SelectedSql = normalizedSql;
+            CustomQueryResultMessage = affectedRows >= 0
+                ? $"Değişiklik sorgusu başarıyla çalıştırıldı. Etkilenen satır sayısı: {affectedRows}."
+                : "Değişiklik sorgusu başarıyla çalıştırıldı.";
+        }
 
         return Page();
     }
@@ -223,9 +241,10 @@ ORDER BY dr.report_date DESC;")
         }
     }
 
-    private static bool TryValidateReadOnlyQuery(string? sql, out string normalizedSql, out string errorMessage)
+    private static bool TryValidateCustomQuery(string? sql, out string normalizedSql, out CustomQueryKind queryKind, out string errorMessage)
     {
         normalizedSql = string.Empty;
+        queryKind = CustomQueryKind.Read;
         errorMessage = string.Empty;
 
         if (string.IsNullOrWhiteSpace(sql))
@@ -246,21 +265,69 @@ ORDER BY dr.report_date DESC;")
             return false;
         }
 
-        if (!Regex.IsMatch(trimmed, @"^(select|with)\b", RegexOptions.IgnoreCase))
+        var firstKeywordMatch = Regex.Match(trimmed, @"^(?<keyword>[a-z_]+)\b", RegexOptions.IgnoreCase);
+        if (!firstKeywordMatch.Success)
         {
-            errorMessage = "Sadece SELECT veya WITH ile baslayan okuma sorgularina izin verilir.";
+            errorMessage = "SQL sorgusu taninmadi.";
+            return false;
+        }
+
+        var firstKeyword = firstKeywordMatch.Groups["keyword"].Value.ToLowerInvariant();
+
+        if (firstKeyword is "select" or "with")
+        {
+            queryKind = CustomQueryKind.Read;
+        }
+        else if (_writeKeywords.Contains(firstKeyword))
+        {
+            queryKind = CustomQueryKind.Write;
+        }
+        else
+        {
+            errorMessage = "Sadece SELECT/WITH ile başlayan okuma sorguları veya INSERT/UPDATE/DELETE değişiklik sorguları kabul edilir.";
             return false;
         }
 
         var keywordPattern = @"\b(" + string.Join("|", _forbiddenKeywords) + @")\b";
         if (Regex.IsMatch(trimmed, keywordPattern, RegexOptions.IgnoreCase))
         {
-            errorMessage = "Sorgu, degisiklik yapan bir ifade iceriyor. Sadece okuma (read-only) sorgulari kabul edilir.";
+            errorMessage = "Sorgu, izin verilmeyen bir ifade içeriyor. Sadece tek satırlı INSERT/UPDATE/DELETE veya SELECT/WITH kabul edilir.";
             return false;
         }
 
         normalizedSql = trimmed;
         return true;
+    }
+
+    private async Task<int> ExecuteNonQueryAsync(string sql)
+    {
+        var connection = _context.Database.GetDbConnection();
+        var shouldCloseConnection = connection.State != ConnectionState.Open;
+
+        try
+        {
+            if (shouldCloseConnection)
+            {
+                await connection.OpenAsync();
+            }
+
+            await using var command = connection.CreateCommand();
+            command.CommandText = sql;
+            return await command.ExecuteNonQueryAsync();
+        }
+        finally
+        {
+            if (shouldCloseConnection)
+            {
+                await connection.CloseAsync();
+            }
+        }
+    }
+
+    private enum CustomQueryKind
+    {
+        Read,
+        Write
     }
 
     public sealed record QueryDefinition(string Key, string Title, string Description, string Sql);

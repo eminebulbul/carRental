@@ -1,0 +1,74 @@
+@page
+@model CarRental.Pages.Vehicles.CreateModel
+@{
+    ViewData["Title"] = "Araç Ekle";
+}
+
+<h1>Araç Ekle</h1>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Vehicle.PlateNumber" class="form-label"></label>
+        <input asp-for="Vehicle.PlateNumber" class="form-control" />
+        <span asp-validation-for="Vehicle.PlateNumber" class="text-danger"></span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Vehicle.Brand" class="form-label"></label>
+            <input asp-for="Vehicle.Brand" class="form-control" />
+            <span asp-validation-for="Vehicle.Brand" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Vehicle.Model" class="form-label"></label>
+            <input asp-for="Vehicle.Model" class="form-control" />
+            <span asp-validation-for="Vehicle.Model" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Vehicle.Year" class="form-label"></label>
+            <input asp-for="Vehicle.Year" class="form-control" />
+            <span asp-validation-for="Vehicle.Year" class="text-danger"></span>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Vehicle.DailyPrice" class="form-label"></label>
+            <input asp-for="Vehicle.DailyPrice" class="form-control" />
+            <span asp-validation-for="Vehicle.DailyPrice" class="text-danger"></span>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Vehicle.Mileage" class="form-label"></label>
+            <input asp-for="Vehicle.Mileage" class="form-control" />
+            <span asp-validation-for="Vehicle.Mileage" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Vehicle.CategoryId" class="form-label">Kategori ID</label>
+            <input asp-for="Vehicle.CategoryId" class="form-control" type="number" />
+            <span asp-validation-for="Vehicle.CategoryId" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Vehicle.BranchId" class="form-label">Şube ID</label>
+            <input asp-for="Vehicle.BranchId" class="form-control" type="number" />
+            <span asp-validation-for="Vehicle.BranchId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Vehicle.Status" class="form-label"></label>
+        <input asp-for="Vehicle.Status" class="form-control" placeholder="available / rented / maintenance" />
+        <span asp-validation-for="Vehicle.Status" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <a asp-page="/Vehicles/Index" class="btn btn-secondary ms-2">İptal</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -21,7 +21,7 @@ public class IndexModel : PageModel
     {
         try
         {
-            Rentals = await _rentalService.GetAllAsync();
+            Rentals = await _rentalService.GetAllDetailedAsync();
         }
         catch (Exception ex)
         {
