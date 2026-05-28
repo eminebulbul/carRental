@@ -6,12 +6,25 @@
 
 <div class="container py-5">
     <div class="row mb-4">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <h1 class="display-5">🚗 Araç Listesi</h1>
         </div>
-        <div class="col-md-4 text-end">
+        <div class="col-md-6 text-end">
             <a class="btn btn-primary me-2" asp-page="/Vehicles/Create">Yeni Ekle</a>
             <span class="badge bg-success fs-6">Toplam: @Model.Vehicles.Count() araç</span>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form method="get" class="d-flex gap-2">
+                <input type="text" name="SearchTerm" class="form-control form-control-sm" placeholder="Plaka, marka, model veya ID ile ara..." value="@Model.SearchTerm" />
+                <button type="submit" class="btn btn-outline-primary btn-sm">🔍 Ara</button>
+                @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                {
+                    <a asp-page="/Vehicles/Index" class="btn btn-outline-secondary btn-sm">✖️ Temizle</a>
+                }
+            </form>
         </div>
     </div>
 
@@ -60,8 +73,9 @@
                             </div>
                         </div>
                         <div class="card-footer bg-transparent border-0">
-                            <div class="d-flex justify-content-end gap-2">
+                            <div class="d-flex justify-content-end gap-2 flex-wrap">
                                 <a asp-page="/Vehicles/ManageFeatures" asp-route-id="@vehicle.VehicleId" class="btn btn-sm btn-outline-info">Özellikler</a>
+                                <a asp-page="/DamageReports/Index" class="btn btn-sm btn-outline-danger">Hasar Raporları</a>
                                 <a asp-page="/Vehicles/Edit" asp-route-id="@vehicle.VehicleId" class="btn btn-sm btn-outline-warning">Düzenle</a>
                                 <a asp-page="/Vehicles/Delete" asp-route-id="@vehicle.VehicleId" class="btn btn-sm btn-outline-danger">Sil</a>
                             </div>

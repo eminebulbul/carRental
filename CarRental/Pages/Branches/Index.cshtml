@@ -1,0 +1,128 @@
+@page
+@model CarRental.Pages.Branches.IndexModel
+@{
+    ViewData["Title"] = "Şubeler ve Personel";
+}
+
+<h1>Şubeler ve Personel Yönetimi</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form method="get" class="d-flex gap-2">
+            <input type="text" name="SearchTerm" class="form-control form-control-sm" placeholder="Şube şehir, adres, personel adı ile ara..." value="@Model.SearchTerm" />
+            <button type="submit" class="btn btn-outline-primary btn-sm">🔍 Ara</button>
+            @if (!string.IsNullOrEmpty(Model.SearchTerm))
+            {
+                <a asp-page="/Branches/Index" class="btn btn-outline-secondary btn-sm">✖️ Temizle</a>
+            }
+        </form>
+    </div>
+</div>
+<!-- Şubeler Bölümü -->
+<div class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Şubeler</h2>
+        <a asp-page="/Branches/CreateBranch" class="btn btn-primary btn-sm">+ Yeni Şube</a>
+    </div>
+
+    @if (Model.Branches.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Şube ID</th>
+                        <th>Şehir</th>
+                        <th>Adres</th>
+                        <th>Telefon</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var branch in Model.Branches)
+                    {
+                        <tr>
+                            <td>@branch.BranchId</td>
+                            <td>@branch.City</td>
+                            <td>@branch.Address</td>
+                            <td>@branch.Phone</td>
+                            <td>
+                                <a asp-page="/Branches/EditBranch" asp-route-id="@branch.BranchId" class="btn btn-warning btn-sm">Düzenle</a>
+                                <form method="post" asp-page-handler="DeleteBranch" asp-route-id="@branch.BranchId" style="display:inline;" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">Henüz şube kaydı yoktur.</div>
+    }
+</div>
+
+<!-- Personel Bölümü -->
+<div class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Personel</h2>
+        <a asp-page="/Branches/CreateStaff" class="btn btn-primary btn-sm">+ Yeni Personel</a>
+    </div>
+
+    @if (Model.Staff.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Personel ID</th>
+                        <th>Ad Soyad</th>
+                        <th>Görev</th>
+                        <th>Şube</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var staff in Model.Staff)
+                    {
+                        <tr>
+                            <td>@staff.StaffId</td>
+                            <td>@staff.FirstName @staff.LastName</td>
+                            <td>@staff.Role</td>
+                            <td>@staff.Branch?.City</td>
+                            <td>
+                                <a asp-page="/Branches/EditStaff" asp-route-id="@staff.StaffId" class="btn btn-warning btn-sm">Düzenle</a>
+                                <form method="post" asp-page-handler="DeleteStaff" asp-route-id="@staff.StaffId" style="display:inline;" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">Henüz personel kaydı yoktur.</div>
+    }
+</div>
+
+<a asp-page="/Index" class="btn btn-secondary mt-4">Ana Sayfa</a>

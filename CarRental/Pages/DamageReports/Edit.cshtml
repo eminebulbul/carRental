@@ -1,0 +1,56 @@
+@page "{id:int}"
+@model CarRental.Pages.DamageReports.EditModel
+@{
+    ViewData["Title"] = "Hasar Raporu Düzenle";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>@ViewData["Title"]</h1>
+            <hr />
+
+            <form method="post">
+                <input asp-for="DamageReport.DamageId" type="hidden" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="DamageReport.RentalId" class="form-label">Kiralama</label>
+                    <select asp-for="DamageReport.RentalId" asp-items="Model.RentalSelectList" class="form-select">
+                        <option value="">-- Kiralama Seçin --</option>
+                    </select>
+                    <span asp-validation-for="DamageReport.RentalId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DamageReport.Description" class="form-label"></label>
+                    <textarea asp-for="DamageReport.Description" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="DamageReport.Description" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DamageReport.RepairCost" class="form-label"></label>
+                        <input asp-for="DamageReport.RepairCost" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="DamageReport.RepairCost" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DamageReport.ReportDate" class="form-label"></label>
+                        <input asp-for="DamageReport.ReportDate" class="form-control" type="date" />
+                        <span asp-validation-for="DamageReport.ReportDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <button type="submit" class="btn btn-warning">Güncelle</button>
+                    <a asp-page="/DamageReports/Index" class="btn btn-secondary">İptal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

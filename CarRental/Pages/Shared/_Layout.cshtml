@@ -121,45 +121,20 @@
                     <li class="nav-item">
                         <a class="nav-link" asp-page="/Index">Ana Sayfa</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="customersDropdown" role="button" data-bs-toggle="dropdown">
-                            Müşteriler
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="customersDropdown">
-                            <li><a class="dropdown-item" asp-page="/Customers/Index">Müşteri Listesi</a></li>
-                            <li><a class="dropdown-item" asp-page="/Customers/Create">Yeni Müşteri</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Customers/Index">Müşteriler</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="vehiclesDropdown" role="button" data-bs-toggle="dropdown">
-                            Araçlar
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="vehiclesDropdown">
-                            <li><a class="dropdown-item" asp-page="/Vehicles/Index">Araç Listesi</a></li>
-                            <li><a class="dropdown-item" asp-page="/Vehicles/Index" asp-route-status="available">Müsait Araçlar</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Vehicles/Index">Araçlar</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="rentalsDropdown" role="button" data-bs-toggle="dropdown">
-                            Kiralamalar
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="rentalsDropdown">
-                            <li><a class="dropdown-item" asp-page="/Rentals/Index">Kiralama Listesi</a></li>
-                            <li><a class="dropdown-item" asp-page="/Rentals/Create">Yeni Kiralama</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" asp-page="/Rentals/Index" asp-route-status="pending">Beklemede Olanlar</a></li>
-                            <li><a class="dropdown-item" asp-page="/Rentals/Index" asp-route-status="active">Aktif Kiralamalar</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Rentals/Index">Kiralamalar</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="moreDropdown" role="button" data-bs-toggle="dropdown">
-                            Daha Fazla
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="moreDropdown">
-                            <li><a class="dropdown-item" asp-page="/Payments/Index">Ödemeler</a></li>
-                            <li><a class="dropdown-item" asp-page="/DamageReports/Index">Hasar Raporları</a></li>
-                            <li><a class="dropdown-item" asp-page="/Reports/Queries">Raporlar / SQL Sorguları</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Branches/Index">Şubeler & Personel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Reports/Queries">SQL Manuel Sorgu</a>
                     </li>
                 </ul>
             </div>
