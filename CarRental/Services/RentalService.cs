@@ -91,13 +91,14 @@ namespace CarRental.Services
             if (vehicle == null)
                 return (false, "Araç bulunamadı", null);
 
-            // KR-01: Validate vehicle is available
-            if (vehicle.Status != "available")
-                return (false, $"Araç şu anda müsait değil (Durum: {vehicle.Status})", null);
+            // KR-01: Bakımdaki araçlar hiçbir şekilde kiralanamaz
+            if (vehicle.Status == "maintenance")
+                return (false, "Bu araç şu anda bakımda olduğu için kiralanamaz", null);
 
-            // KR-01: Check for overlapping rentals
+            // KR-01: Tarih çakışması kontrolü — aynı araç aynı tarihlerde iki kez kiralanamaz
+            // (pending veya active durumundaki mevcut kiralamalarla çakışma kontrolü)
             if (await HasOverlappingRentalAsync(rental.VehicleId ?? 0, rental.StartDate, rental.EndDate ?? rental.StartDate))
-                return (false, "Bu araç seçilen tarih aralığında zaten kiralanmış", null);
+                return (false, "Bu araç seçilen tarih aralığında zaten kiralanmış veya rezerve edilmiş", null);
 
             // Validate date range
             if (rental.EndDate.HasValue && rental.EndDate <= rental.StartDate)
@@ -116,6 +117,13 @@ namespace CarRental.Services
             try
             {
                 await CreateAsync(rental);
+                
+                // Eğer baştan "active" olarak oluşturulduysa aracı "rented" (Kirada) olarak işaretle
+                if (rental.Status == "active" && rental.VehicleId.HasValue)
+                {
+                    await _vehicleService.UpdateStatusAsync(rental.VehicleId.Value, "rented");
+                }
+
                 return (true, "Kiralama başarıyla oluşturuldu", rental);
             }
             catch (Exception ex)
@@ -133,6 +141,17 @@ namespace CarRental.Services
             if (rental.Status != "pending")
                 return (false, $"Yalnızca pending durumundaki kiralamalar aktif edilebilir. Mevcut durum: {rental.Status}");
 
+            // Aracın güncel şubesini al — araç bu sürede başka şubeye taşınmış olabilir
+            var vehicle = await _vehicleService.GetByIdAsync(rental.VehicleId ?? 0);
+            if (vehicle == null)
+                return (false, "Araç bulunamadı");
+
+            // Alış şubesini aracın ŞU ANKİ gerçek konumuna güncelle
+            if (vehicle.BranchId.HasValue)
+            {
+                rental.PickupBranchId = vehicle.BranchId.Value;
+            }
+
             rental.Status = "active";
 
             // Update vehicle status to 'rented'
@@ -142,7 +161,7 @@ namespace CarRental.Services
             try
             {
                 await UpdateAsync(rental);
-                return (true, "Kiralama başarıyla aktif hale getirildi");
+                return (true, "Kiralama başarıyla aktif hale getirildi. Alış şubesi aracın güncel konumuna güncellendi.");
             }
             catch (Exception ex)
             {
@@ -175,9 +194,25 @@ namespace CarRental.Services
             try
             {
                 await UpdateAsync(rental);
+                
+                // Otomatik ödeme kaydı oluştur (Eğer daha önceden ödeme alınmadıysa)
+                var existingPayment = await _context.Payments.FirstOrDefaultAsync(p => p.RentalId == rental.RentalId);
+                if (existingPayment == null && rental.TotalAmount.HasValue && rental.TotalAmount.Value > 0)
+                {
+                    var autoPayment = new Payment
+                    {
+                        RentalId = rental.RentalId,
+                        Amount = rental.TotalAmount.Value,
+                        Method = "credit_card", // Varsayılan ödeme yöntemi
+                        PaymentDate = DateTime.Now
+                    };
+                    _context.Payments.Add(autoPayment);
+                    await _context.SaveChangesAsync();
+                }
+
                 // Note: Database trigger (trg_rental_completed) will automatically update vehicle status to 'available'
                 // and update its branch_id to dropoff_branch_id
-                return (true, "Kiralama başarıyla tamamlandı. Araç otomatik olarak müsait hale getirildi.");
+                return (true, "Kiralama başarıyla tamamlandı. Araç müsait hale getirildi ve ödeme kaydı otomatik oluşturuldu.");
             }
             catch (Exception ex)
             {
@@ -194,10 +229,11 @@ namespace CarRental.Services
             if (rental.Status == "completed" || rental.Status == "cancelled")
                 return (false, $"Bu durumda kiralama iptal edilemez. Mevcut durum: {rental.Status}");
 
+            var wasActive = rental.Status == "active";
             rental.Status = "cancelled";
 
             // If rental was active, update vehicle status back to available
-            if (rental.Status == "active")
+            if (wasActive)
             {
                 if (!await _vehicleService.UpdateStatusAsync(rental.VehicleId ?? 0, "available"))
                     return (false, "Araç durumu güncellenirken hata oluştu");
@@ -212,6 +248,21 @@ namespace CarRental.Services
             {
                 return (false, $"Kiralama iptal edilirken hata: {ex.Message}");
             }
+        }
+
+        public override async Task<bool> DeleteAsync(int id)
+        {
+            var rental = await GetByIdAsync(id);
+            if (rental == null)
+                return false;
+
+            // If the rental was active, update vehicle status back to available
+            if (rental.Status == "active")
+            {
+                await _vehicleService.UpdateStatusAsync(rental.VehicleId ?? 0, "available");
+            }
+
+            return await base.DeleteAsync(id);
         }
 
         public async Task<decimal> CalculateRentalCostAsync(int vehicleId, DateTime startDate, DateTime endDate)

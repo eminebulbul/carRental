@@ -39,6 +39,8 @@ namespace CarRental.Pages.Rentals
         {
             await LoadDropdownsAsync();
             Rental.Status = "pending";
+            Rental.StartDate = DateTime.Today;
+            Rental.EndDate = DateTime.Today.AddDays(1);
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -77,10 +79,14 @@ namespace CarRental.Pages.Rentals
             try
             {
                 var customers = await _customerService.GetAllAsync();
-                Customers = new SelectList(customers, "CustomerId", "FirstName");
+                Customers = new SelectList(
+                    customers.Select(c => new { c.CustomerId, Display = $"{c.FirstName} {c.LastName}" }),
+                    "CustomerId", "Display");
 
                 var vehicles = await _vehicleService.GetAllAsync();
-                Vehicles = new SelectList(vehicles, "VehicleId", "Model");
+                Vehicles = new SelectList(
+                    vehicles.Select(v => new { v.VehicleId, Display = $"{v.Brand} {v.Model} ({v.PlateNumber}) - ₺{v.DailyPrice}/gün" }),
+                    "VehicleId", "Display");
 
                 var branches = await _branchService.GetAllAsync();
                 Branches = new SelectList(branches, "BranchId", "City");
@@ -89,6 +95,17 @@ namespace CarRental.Pages.Rentals
             {
                 _logger.LogError(ex, "Dropdown'lar yüklenirken hata");
             }
+        }
+
+        // Razor view'dan çağrılıyor — JavaScript'e araç fiyat ve şube bilgilerini aktarmak için
+        public async Task<IEnumerable<Vehicle>> GetVehiclesWithPricesAsync()
+        {
+            // GetAllAsync Include yapmaz, bu yüzden Branch bilgisi gelmez.
+            // Detaylı sorguları birleştirerek Branch bilgisini yüklüyoruz.
+            var available = await _vehicleService.GetAvailableVehiclesAsync();
+            var rented = await _vehicleService.GetVehiclesByStatusAsync("rented");
+            var maintenance = await _vehicleService.GetVehiclesByStatusAsync("maintenance");
+            return available.Concat(rented).Concat(maintenance);
         }
     }
 }

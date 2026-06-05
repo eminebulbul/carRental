@@ -30,11 +30,10 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Rental.PickupBranchId" class="form-label"></label>
-                            <select asp-for="Rental.PickupBranchId" asp-items="@Model.Branches" class="form-select">
-                                <option value="">-- Alış Şubesi Seçin --</option>
-                            </select>
-                            <span asp-validation-for="Rental.PickupBranchId" class="text-danger"></span>
+                            <label class="form-label">Alış Şubesi</label>
+                            <input type="hidden" asp-for="Rental.PickupBranchId" id="Rental_PickupBranchId" />
+                            <div class="form-control bg-light" id="pickupBranchDisplay">🏢 Araç seçildiğinde otomatik belirlenecek</div>
+                            <small class="text-muted">Aracın güncel konumuna göre atanır. Kiralama aktif edildiğinde tekrar güncellenir.</small>
                         </div>
                     </div>
 
@@ -49,13 +48,13 @@
 
                         <div class="mb-3">
                             <label asp-for="Rental.StartDate" class="form-label"></label>
-                            <input asp-for="Rental.StartDate" class="form-control" type="datetime-local" />
+                            <input asp-for="Rental.StartDate" class="form-control" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
                             <span asp-validation-for="Rental.StartDate" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Rental.EndDate" class="form-label"></label>
-                            <input asp-for="Rental.EndDate" class="form-control" type="datetime-local" />
+                            <input asp-for="Rental.EndDate" class="form-control" type="date" min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
                             <span asp-validation-for="Rental.EndDate" class="text-danger"></span>
                         </div>
                     </div>
@@ -72,8 +71,8 @@
                     <span asp-validation-for="Rental.Status" class="text-danger"></span>
                 </div>
 
-                <div class="alert alert-info">
-                    <strong>Not:</strong> Toplam tutar, bitiş tarihi girildiğinde otomatik olarak hesaplanacaktır.
+                <div class="alert alert-info" id="costEstimate">
+                    <strong>💰 Tahmini Tutar:</strong> Araç ve tarihleri seçtiğinizde otomatik hesaplanacaktır.
                 </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-start">
@@ -82,10 +81,16 @@
                 </div>
             </form>
 
-            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.Count > 0)
+            @if (!ViewData.ModelState.IsValid)
             {
-                <div class="alert alert-danger mt-3">
-                    <strong>Hata!</strong> Lütfen tüm gerekli alanları kontrol edin.
+                <div class="alert alert-danger mt-3 mb-0">
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            <span>⚠️ @error.ErrorMessage</span>
+                        }
+                    }
                 </div>
             }
         </div>
@@ -94,4 +99,62 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Araç günlük fiyatlarını ve şube bilgilerini sunucudan al
+        const vehicleData = {
+            @foreach (var v in await Model.GetVehiclesWithPricesAsync())
+            {
+                @:@v.VehicleId: { price: @v.DailyPrice.ToString(System.Globalization.CultureInfo.InvariantCulture), branchId: @(v.BranchId ?? 0), branchName: "@(v.Branch?.City ?? "Bilinmiyor")" },
+            }
+        };
+
+        const vehicleSelect = document.getElementById('Rental_VehicleId');
+        const startDateInput = document.getElementById('Rental_StartDate');
+        const endDateInput = document.getElementById('Rental_EndDate');
+        const costBox = document.getElementById('costEstimate');
+        const pickupBranchInput = document.getElementById('Rental_PickupBranchId');
+        const pickupBranchDisplay = document.getElementById('pickupBranchDisplay');
+
+        function onVehicleChange() {
+            const vehicleId = vehicleSelect?.value;
+            if (vehicleId && vehicleData[vehicleId]) {
+                const data = vehicleData[vehicleId];
+                // Alış şubesini otomatik ata
+                pickupBranchInput.value = data.branchId;
+                pickupBranchDisplay.innerHTML = `🏢 <strong>${data.branchName}</strong>`;
+                pickupBranchDisplay.className = 'form-control bg-light text-success';
+            } else {
+                pickupBranchInput.value = '';
+                pickupBranchDisplay.innerHTML = '🏢 Araç seçildiğinde otomatik belirlenecek';
+                pickupBranchDisplay.className = 'form-control bg-light';
+            }
+            calculateCost();
+        }
+
+        function calculateCost() {
+            const vehicleId = vehicleSelect?.value;
+            const startDate = startDateInput?.value;
+            const endDate = endDateInput?.value;
+
+            if (vehicleId && startDate && endDate && vehicleData[vehicleId]) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                let days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                if (days <= 0) days = 1;
+                const dailyPrice = vehicleData[vehicleId].price;
+                const total = dailyPrice * days;
+
+                costBox.innerHTML = `<strong>💰 Tahmini Tutar:</strong> ${days} gün × ₺${dailyPrice.toFixed(2)} = <strong class="text-success fs-5">₺${total.toFixed(2)}</strong>`;
+                costBox.className = 'alert alert-success';
+            } else {
+                costBox.innerHTML = '<strong>💰 Tahmini Tutar:</strong> Araç ve tarihleri seçtiğinizde otomatik hesaplanacaktır.';
+                costBox.className = 'alert alert-info';
+            }
+        }
+
+        vehicleSelect?.addEventListener('change', onVehicleChange);
+        startDateInput?.addEventListener('change', calculateCost);
+        endDateInput?.addEventListener('change', calculateCost);
+    </script>
 }

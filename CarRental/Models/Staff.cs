@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -28,5 +28,5 @@ public partial class Staff
     public string Role { get; set; } = null!;
 
     [Display(Name = "Şube")]
-    public virtual Branch Branch { get; set; } = null!;
+    public virtual Branch? Branch { get; set; }
 }

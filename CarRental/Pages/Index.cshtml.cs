@@ -22,6 +22,7 @@ public class IndexModel : PageModel
     public int PendingRentals { get; set; }
     public int CompletedRentals { get; set; }
     public int CancelledRentals { get; set; }
+    public int TotalRentals { get; set; }
     public int TotalDamageReports { get; set; }
     public decimal TotalRevenue { get; set; }
     public decimal TotalRepairCosts { get; set; }
@@ -76,8 +77,12 @@ public class IndexModel : PageModel
             var cancelledRentals = await _rentalService.GetByStatusAsync("cancelled");
             CancelledRentals = cancelledRentals.Count();
 
-            // Load financial statistics
-            TotalRevenue = await _paymentService.GetTotalRevenueAsync();
+            var allRentals = await _rentalService.GetAllAsync();
+            TotalRentals = allRentals.Count();
+
+            // Load financial statistics (Sadece Tamamlananlar)
+            TotalRevenue = allRentals.Where(r => r.Status == "completed" && r.TotalAmount.HasValue)
+                                     .Sum(r => r.TotalAmount.Value);
 
             // Load damage report statistics
             var damageReports = await _damageReportService.GetAllAsync();

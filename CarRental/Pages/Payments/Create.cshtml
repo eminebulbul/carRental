@@ -1,0 +1,79 @@
+@page
+@model CarRental.Pages.Payments.CreateModel
+
+@{
+    ViewData["Title"] = "Yeni Ödeme";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Yeni Ödeme</h2>
+        <p class="text-muted mb-0">Sisteme yeni bir ödeme kaydı ekleyin.</p>
+    </div>
+    <div>
+        <a asp-page="./Index" class="btn btn-outline-secondary">Listeye Dön</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Payment.RentalId" class="form-label fw-bold"></label>
+                        <select asp-for="Payment.RentalId" class="form-select" asp-items="Model.Rentals">
+                            <option value="">-- Kiralama Seçin --</option>
+                        </select>
+                        <span asp-validation-for="Payment.RentalId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Payment.Amount" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-success fw-bold">₺</span>
+                            <input asp-for="Payment.Amount" class="form-control" type="number" step="0.01" placeholder="0.00" />
+                        </div>
+                        <span asp-validation-for="Payment.Amount" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Payment.Method" class="form-label fw-bold"></label>
+                        <select asp-for="Payment.Method" class="form-select">
+                            <option value="">-- Yöntem Seçin --</option>
+                            <option value="credit_card">💳 Kredi Kartı</option>
+                            <option value="cash">💵 Nakit</option>
+                        </select>
+                        <span asp-validation-for="Payment.Method" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Payment.PaymentDate" class="form-label fw-bold"></label>
+                        <input asp-for="Payment.PaymentDate" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="Payment.PaymentDate" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Ödemeyi Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card border-info bg-light">
+            <div class="card-body">
+                <h5 class="card-title text-info mb-3"><i class="bi bi-info-circle me-2"></i>Bilgi</h5>
+                <p class="mb-2"><strong>Otomatik Tutar:</strong> Bir kiralama seçtiğinizde, sayfa yeniden yüklenmezse tutarı manuel girmelisiniz. Ancak "Ödeme Yap" butonuna direkt bir kiralama sayfasından tıklarsanız tutar otomatik gelecektir.</p>
+                <p class="mb-0"><strong>Aynı Kiralama:</strong> Aynı kiralama kaydına birden fazla ödeme girilmesini engelleyen veritabanı kuralları mevcuttur. Daha önceden ödenmiş bir kiralamayı tekrar ödemeye çalışırsanız sistem sizi uyaracaktır.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

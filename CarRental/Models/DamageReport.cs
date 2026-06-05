@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -27,5 +27,5 @@ public partial class DamageReport
     public DateOnly? ReportDate { get; set; }
 
     [Display(Name = "Kiralama")]
-    public virtual Rental Rental { get; set; } = null!;
+    public virtual Rental? Rental { get; set; }
 }

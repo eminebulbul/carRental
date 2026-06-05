@@ -25,7 +25,11 @@ public class IndexModel : PageModel
     {
         try
         {
-            var allVehicles = await _vehicleService.GetAllAsync();
+            // GetAllAsync yerine detaylı sorgu — Branch ve Category bilgilerini de yükler
+            var available = await _vehicleService.GetAvailableVehiclesAsync();
+            var rented = await _vehicleService.GetVehiclesByStatusAsync("rented");
+            var maintenance = await _vehicleService.GetVehiclesByStatusAsync("maintenance");
+            var allVehicles = available.Concat(rented).Concat(maintenance).AsEnumerable();
 
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {

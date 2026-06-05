@@ -32,11 +32,10 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Rental.PickupBranchId" class="form-label"></label>
-                            <select asp-for="Rental.PickupBranchId" asp-items="@Model.Branches" class="form-select">
-                                <option value="">-- Alış Şubesi Seçin --</option>
-                            </select>
-                            <span asp-validation-for="Rental.PickupBranchId" class="text-danger"></span>
+                            <label class="form-label">Alış Şubesi</label>
+                            <input type="hidden" asp-for="Rental.PickupBranchId" id="Rental_PickupBranchId" />
+                            <div class="form-control bg-light" id="pickupBranchDisplay">🏢 Yükleniyor...</div>
+                            <small class="text-muted">Aracın bulunduğu şube otomatik atanır.</small>
                         </div>
                     </div>
 
@@ -51,39 +50,40 @@
 
                         <div class="mb-3">
                             <label asp-for="Rental.StartDate" class="form-label"></label>
-                            <input asp-for="Rental.StartDate" class="form-control" type="datetime-local" />
+                            <input asp-for="Rental.StartDate" class="form-control" type="date" />
                             <span asp-validation-for="Rental.StartDate" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Rental.EndDate" class="form-label"></label>
-                            <input asp-for="Rental.EndDate" class="form-control" type="datetime-local" />
+                            <input asp-for="Rental.EndDate" class="form-control" type="date" />
                             <span asp-validation-for="Rental.EndDate" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label asp-for="Rental.Status" class="form-label"></label>
-                            <select asp-for="Rental.Status" class="form-select">
-                                <option value="pending">Bekleme</option>
-                                <option value="active">Aktif</option>
-                                <option value="completed">Tamamlandı</option>
-                                <option value="cancelled">İptal</option>
-                            </select>
-                            <span asp-validation-for="Rental.Status" class="text-danger"></span>
-                        </div>
-                    </div>
+                <div class="mb-3">
+                    <label asp-for="Rental.Status" class="form-label"></label>
+                    <select asp-for="Rental.Status" class="form-select">
+                        <option value="pending">Bekleme</option>
+                        <option value="active">Aktif</option>
+                        <option value="completed">Tamamlandı</option>
+                        <option value="cancelled">İptal</option>
+                    </select>
+                    <span asp-validation-for="Rental.Status" class="text-danger"></span>
+                </div>
 
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label asp-for="Rental.TotalAmount" class="form-label"></label>
-                            <input asp-for="Rental.TotalAmount" class="form-control" type="number" step="0.01" />
-                            <span asp-validation-for="Rental.TotalAmount" class="text-danger"></span>
-                        </div>
-                    </div>
+                <div class="alert alert-info" id="costEstimate">
+                    <strong>💰 Toplam Tutar:</strong>
+                    @if (Model.Rental.TotalAmount.HasValue)
+                    {
+                        <strong class="text-success fs-5">₺@Model.Rental.TotalAmount.Value.ToString("N2")</strong>
+                        <small class="text-muted">(tarih değişikliğinde yeniden hesaplanır)</small>
+                    }
+                    else
+                    {
+                        <span>Araç ve tarihleri seçtiğinizde otomatik hesaplanacaktır.</span>
+                    }
                 </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-start">
@@ -91,10 +91,83 @@
                     <a asp-page="./Index" class="btn btn-secondary">İptal</a>
                 </div>
             </form>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger mt-3 mb-0">
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            <span>⚠️ @error.ErrorMessage</span>
+                        }
+                    }
+                </div>
+            }
         </div>
     </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Araç günlük fiyatlarını ve şube bilgilerini sunucudan al
+        const vehicleData = {
+            @foreach (var v in await Model.GetVehiclesWithPricesAsync())
+            {
+                @:@v.VehicleId: { price: @v.DailyPrice.ToString(System.Globalization.CultureInfo.InvariantCulture), branchId: @(v.BranchId ?? 0), branchName: "@(v.Branch?.City ?? "Bilinmiyor")" },
+            }
+        };
+
+        const vehicleSelect = document.getElementById('Rental_VehicleId');
+        const startDateInput = document.getElementById('Rental_StartDate');
+        const endDateInput = document.getElementById('Rental_EndDate');
+        const costBox = document.getElementById('costEstimate');
+        const pickupBranchInput = document.getElementById('Rental_PickupBranchId');
+        const pickupBranchDisplay = document.getElementById('pickupBranchDisplay');
+
+        function updatePickupBranch() {
+            const vehicleId = vehicleSelect?.value;
+            if (vehicleId && vehicleData[vehicleId]) {
+                const data = vehicleData[vehicleId];
+                pickupBranchInput.value = data.branchId;
+                pickupBranchDisplay.innerHTML = `🏢 <strong>${data.branchName}</strong>`;
+                pickupBranchDisplay.className = 'form-control bg-light text-success';
+            } else {
+                pickupBranchDisplay.innerHTML = '🏢 Araç seçildiğinde otomatik belirlenecek';
+                pickupBranchDisplay.className = 'form-control bg-light';
+            }
+        }
+
+        function onVehicleChange() {
+            updatePickupBranch();
+            calculateCost();
+        }
+
+        function calculateCost() {
+            const vehicleId = vehicleSelect?.value;
+            const startDate = startDateInput?.value;
+            const endDate = endDateInput?.value;
+
+            if (vehicleId && startDate && endDate && vehicleData[vehicleId]) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                let days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                if (days <= 0) days = 1;
+                const dailyPrice = vehicleData[vehicleId].price;
+                const total = dailyPrice * days;
+
+                costBox.innerHTML = `<strong>💰 Toplam Tutar:</strong> ${days} gün × ₺${dailyPrice.toFixed(2)} = <strong class="text-success fs-5">₺${total.toFixed(2)}</strong>`;
+                costBox.className = 'alert alert-success';
+            }
+        }
+
+        // Sayfa yüklendiğinde mevcut aracın şubesini göster
+        updatePickupBranch();
+
+        vehicleSelect?.addEventListener('change', onVehicleChange);
+        startDateInput?.addEventListener('change', calculateCost);
+        endDateInput?.addEventListener('change', calculateCost);
+    </script>
 }

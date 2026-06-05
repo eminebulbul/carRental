@@ -265,14 +265,14 @@ ORDER BY dr.report_date DESC;")
             return false;
         }
 
-        var firstKeywordMatch = Regex.Match(trimmed, @"^(?<keyword>[a-z_]+)\b", RegexOptions.IgnoreCase);
+        var firstKeywordMatch = Regex.Match(trimmed, @"^(?<keyword>[a-zA-Z_İı]+)\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         if (!firstKeywordMatch.Success)
         {
             errorMessage = "SQL sorgusu taninmadi.";
             return false;
         }
 
-        var firstKeyword = firstKeywordMatch.Groups["keyword"].Value.ToLowerInvariant();
+        var firstKeyword = firstKeywordMatch.Groups["keyword"].Value.Replace('İ', 'I').Replace('ı', 'i').ToLowerInvariant();
 
         if (firstKeyword is "select" or "with")
         {

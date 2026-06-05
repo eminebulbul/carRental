@@ -22,56 +22,63 @@
     </div>
 </div>
 
-<div class="card mb-4">
-    <div class="card-body">
-        
-        <p class="text-muted mb-3">SELECT/WITH sorguları sonuç tablosu döndürür. INSERT/UPDATE/DELETE sorguları ise etkilenen satır sayısını gösterir. Tek ifade çalıştırılır.</p>
+<div class="row">
+    <!-- Sol Sütun: Özel Sorgu -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <p class="text-muted mb-3">Özel SQL sorgunuzu aşağıya yazarak çalıştırabilirsiniz.</p>
 
-        <form method="post" asp-page-handler="RunCustom">
-            <div class="mb-3">
-                <textarea asp-for="CustomSql" class="form-control custom-sql-input" rows="8" placeholder="SELECT * FROM vehicle WHERE status = 'available' ORDER BY daily_price;\n\nINSERT INTO customer (...) VALUES (...);\nUPDATE vehicle SET status = 'maintenance' WHERE vehicle_id = 1;\nDELETE FROM rental WHERE rental_id = 1;"></textarea>
-            </div>
+                <form method="post" asp-page-handler="RunCustom">
+                    <div class="mb-3">
+                        <textarea asp-for="CustomSql" class="form-control custom-sql-input" rows="8" placeholder="SELECT * FROM vehicle;"></textarea>
+                    </div>
 
-            <button type="submit" class="btn btn-success">Sorguyu Çalıştır</button>
-        </form>
-
-        @if (!string.IsNullOrWhiteSpace(Model.CustomQueryError))
-        {
-            <div class="alert alert-danger mt-3 mb-0">@Model.CustomQueryError</div>
-        }
-
-        @if (!string.IsNullOrWhiteSpace(Model.CustomQueryResultMessage))
-        {
-            <div class="alert alert-success mt-3 mb-0">@Model.CustomQueryResultMessage</div>
-        }
-    </div>
-</div>
-
-<div class="card mb-4">
-    <div class="card-body">
-        <h5 class="card-title mb-3">Hazır Sorgular</h5>
-        <div class="d-flex flex-wrap gap-2">
-            @foreach (var query in Model.QueryDefinitions)
-            {
-                var isSelected = query.Key == Model.SelectedQueryKey;
-                <form method="post" asp-page-handler="Run">
-                    <button type="submit"
-                            name="queryKey"
-                            value="@query.Key"
-                            class="btn @(isSelected ? "btn-primary" : "btn-outline-primary") btn-sm">
-                        @query.Title
-                    </button>
+                    <button type="submit" class="btn btn-success">Sorguyu Çalıştır</button>
                 </form>
-            }
+
+                @if (!string.IsNullOrWhiteSpace(Model.CustomQueryError))
+                {
+                    <div class="alert alert-danger mt-3 mb-0">@Model.CustomQueryError</div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.CustomQueryResultMessage))
+                {
+                    <div class="alert alert-success mt-3 mb-0">@Model.CustomQueryResultMessage</div>
+                }
+            </div>
         </div>
     </div>
-</div>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <h5 class="card-title">@Model.SelectedQueryTitle</h5>
-        <p class="text-muted">@Model.SelectedQueryDescription</p>
-        <pre class="bg-light p-3 rounded border"><code>@Model.SelectedSql</code></pre>
+    <!-- Sağ Sütun: Hazır Sorgular -->
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Hazır Sorgular</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var query in Model.QueryDefinitions)
+                    {
+                        var isSelected = query.Key == Model.SelectedQueryKey;
+                        <form method="post" asp-page-handler="Run">
+                            <button type="submit"
+                                    name="queryKey"
+                                    value="@query.Key"
+                                    class="btn @(isSelected ? "btn-primary" : "btn-outline-primary") btn-sm">
+                                @query.Title
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">@Model.SelectedQueryTitle</h5>
+                <p class="text-muted">@Model.SelectedQueryDescription</p>
+                <pre class="bg-light p-3 rounded border" style="max-height: 180px; overflow-y: auto;"><code>@Model.SelectedSql</code></pre>
+            </div>
+        </div>
     </div>
 </div>
 

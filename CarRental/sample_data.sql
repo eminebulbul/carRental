@@ -96,7 +96,17 @@ INSERT INTO CUSTOMER (first_name, last_name, license_number, birth_date, email, 
 ('Kemal', 'Sucu', 'TR234567', '1988-07-22', 'kemal@example.com', '+90 555 001 0002'),
 ('Elif', 'Akbay', 'TR345678', '1992-11-10', 'elif@example.com', '+90 555 001 0003'),
 ('Can', 'Polat', 'TR456789', '1990-05-05', 'can@example.com', '+90 555 001 0004'),
-('Nur', 'Çetin', 'TR567890', '1998-09-18', 'nur@example.com', '+90 555 001 0005');
+('Nur', 'Çetin', 'TR567890', '1998-09-18', 'nur@example.com', '+90 555 001 0005'),
+('Ahmet', 'Kara', 'TR678901', '1993-01-25', 'ahmet.kara@example.com', '+90 555 001 0006'),
+('Zeynep', 'Yıldız', 'TR789012', '1997-06-14', 'zeynep.yildiz@example.com', '+90 555 001 0007'),
+('Burak', 'Özdemir', 'TR890123', '1985-12-03', 'burak.ozdemir@example.com', '+90 555 001 0008'),
+('Selin', 'Aydın', 'TR901234', '1999-08-30', 'selin.aydin@example.com', '+90 555 001 0009'),
+('Mert', 'Koç', 'TR012345', '1991-04-17', 'mert.koc@example.com', '+90 555 001 0010'),
+('Deniz', 'Arslan', 'TR112233', '1996-10-08', 'deniz.arslan@example.com', '+90 555 001 0011'),
+('Gamze', 'Şen', 'TR223344', '1994-02-21', 'gamze.sen@example.com', '+90 555 001 0012'),
+('Emre', 'Tunç', 'TR334455', '1987-07-11', 'emre.tunc@example.com', '+90 555 001 0013'),
+('Aylin', 'Doğan', 'TR445566', '2000-05-29', 'aylin.dogan@example.com', '+90 555 001 0014'),
+('Oğuz', 'Ertürk', 'TR556677', '1989-11-16', 'oguz.erturk@example.com', '+90 555 001 0015');
 
 -- =====================================================================
 -- 8. RENTALS (Kiralamalar)

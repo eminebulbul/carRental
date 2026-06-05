@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -52,7 +52,7 @@ public partial class Rental
     public virtual Payment? Payment { get; set; }
 
     [Display(Name = "Alış Şubesi")]
-    public virtual Branch PickupBranch { get; set; } = null!;
+    public virtual Branch? PickupBranch { get; set; }
 
     [Display(Name = "Araç")]
     public virtual Vehicle? Vehicle { get; set; }

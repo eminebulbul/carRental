@@ -17,7 +17,7 @@ namespace CarRental.Services
             _context = context;
             _dbSet = context.Set<T>();
         }
-
+            //Tüm kayıtları getir → SELECT * FROM tablo
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
@@ -27,7 +27,7 @@ namespace CarRental.Services
         {
             return await _dbSet.FindAsync(id);
         }
-
+//INSERT INTO
         public virtual async Task<T> CreateAsync(T entity)
         {
             await _dbSet.AddAsync(entity);

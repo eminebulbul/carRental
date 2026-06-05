@@ -1,8 +1,47 @@
-﻿@page
+@page
 @model IndexModel
 @{
     ViewData["Title"] = "Ana Sayfa - Araç Kiralama Sistemi";
 }
+
+<style>
+    .stat-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .stat-card .card-body {
+        padding: 1.5rem;
+        position: relative;
+    }
+    .stat-card .stat-icon {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        font-size: 3rem;
+        opacity: 0.2;
+    }
+    .bg-gradient-primary { background: linear-gradient(135deg, #4e73df 0%, #224abe 100%); }
+    .bg-gradient-success { background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%); }
+    .bg-gradient-warning { background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%); }
+    .bg-gradient-info { background: linear-gradient(135deg, #36b9cc 0%, #258391 100%); }
+    
+    .quick-action-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        transition: all 0.2s;
+    }
+    .quick-action-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+</style>
 
 <div class="row mb-4">
     <div class="col-md-12">
@@ -14,34 +53,38 @@
 <!-- Statistics Cards -->
 <div class="row mb-5">
     <div class="col-md-3 mb-3">
-        <div class="card bg-primary text-white">
+        <div class="card stat-card bg-gradient-primary text-white h-100">
             <div class="card-body">
-                <h5 class="card-title">Toplam Müşteriler</h5>
-                <h2>@Model.TotalCustomers</h2>
+                <div class="stat-icon">👥</div>
+                <p class="text-uppercase mb-1 fw-bold" style="font-size: 0.85rem; letter-spacing: 1px;">Toplam Müşteri</p>
+                <h2 class="display-5 fw-bold mb-0">@Model.TotalCustomers</h2>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
-        <div class="card bg-success text-white">
+        <div class="card stat-card bg-gradient-success text-white h-100">
             <div class="card-body">
-                <h5 class="card-title">Müsait Araçlar</h5>
-                <h2>@Model.AvailableVehicles</h2>
+                <div class="stat-icon">✅</div>
+                <p class="text-uppercase mb-1 fw-bold" style="font-size: 0.85rem; letter-spacing: 1px;">Müsait Araçlar</p>
+                <h2 class="display-5 fw-bold mb-0">@Model.AvailableVehicles</h2>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
-        <div class="card bg-warning text-white">
+        <div class="card stat-card bg-gradient-warning text-white h-100">
             <div class="card-body">
-                <h5 class="card-title">Aktif Kiralamalar</h5>
-                <h2>@Model.ActiveRentals</h2>
+                <div class="stat-icon">📅</div>
+                <p class="text-uppercase mb-1 fw-bold" style="font-size: 0.85rem; letter-spacing: 1px;">Toplam Kiralama</p>
+                <h2 class="display-5 fw-bold mb-0">@Model.TotalRentals</h2>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
-        <div class="card bg-info text-white">
+        <div class="card stat-card bg-gradient-info text-white h-100">
             <div class="card-body">
-                <h5 class="card-title">Toplam Gelir</h5>
-                <h2>₺@Model.TotalRevenue.ToString("N0")</h2>
+                <div class="stat-icon">💰</div>
+                <p class="text-uppercase mb-1 fw-bold" style="font-size: 0.85rem; letter-spacing: 1px;">Toplam Gelir</p>
+                <h2 class="display-5 fw-bold mb-0">₺@Model.TotalRevenue.ToString("N0")</h2>
             </div>
         </div>
     </div>
@@ -53,7 +96,7 @@
         <h2 class="mb-4">Hızlı İşlemler</h2>
     </div>
     <div class="col-md-6 mb-3">
-        <div class="card">
+        <div class="card quick-action-card h-100">
             <div class="card-body">
                 <h5 class="card-title">📋 Müşteri Yönetimi</h5>
                 <p class="card-text">Müşterileri yönetin, yeni müşteri ekleyin veya mevcut bilgileri güncelleyin.</p>
@@ -63,7 +106,7 @@
         </div>
     </div>
     <div class="col-md-6 mb-3">
-        <div class="card">
+        <div class="card quick-action-card h-100">
             <div class="card-body">
                 <h5 class="card-title">🚗 Araç Yönetimi</h5>
                 <p class="card-text">Araç katalogunu görüntüleyin, müsaitlik durumunu kontrol edin.</p>
@@ -73,7 +116,7 @@
         </div>
     </div>
     <div class="col-md-6 mb-3">
-        <div class="card">
+        <div class="card quick-action-card h-100">
             <div class="card-body">
                 <h5 class="card-title">📅 Kiralama Yönetimi</h5>
                 <p class="card-text">Kiralamalar oluşturun, durumlarını güncelleyin ve takip edin.</p>
@@ -83,7 +126,7 @@
         </div>
     </div>
     <div class="col-md-6 mb-3">
-        <div class="card">
+        <div class="card quick-action-card h-100">
             <div class="card-body">
                 <h5 class="card-title">💳 Ödeme & Hasar</h5>
                 <p class="card-text">Ödemeleri ve hasar raporlarını yönetin.</p>
